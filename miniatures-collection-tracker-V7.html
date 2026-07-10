@@ -1,0 +1,1700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Miniatures Collection Atlas — Specimen Ledger</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Source+Sans+3:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#20211c;
+    --parchment:#f1e9d8;
+    --parchment-2:#e9dfc8;
+    --bottle-green:#1f3a2e;
+    --bottle-green-dk:#152a20;
+    --brass:#b8863b;
+    --amber:#e8a94c;
+    --burgundy:#6b2737;
+    --card-bg:#fbf7ee;
+    --line:#d8cbac;
+    --shadow:0 6px 18px rgba(21,42,32,0.18);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--parchment);
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(31,58,46,0.06) 1px, transparent 0);
+    background-size:22px 22px;
+    color:var(--ink);
+    font-family:'Source Sans 3', sans-serif;
+    min-height:100vh;
+  }
+  ::selection{background:var(--amber); color:var(--ink);}
+  a{color:inherit;}
+
+  /* ---------- Header ---------- */
+  header.top{
+    background:linear-gradient(180deg, var(--bottle-green) 0%, var(--bottle-green-dk) 100%);
+    color:var(--parchment);
+    padding:28px 20px 22px;
+    box-shadow:var(--shadow);
+    position:relative;
+    overflow:hidden;
+  }
+  header.top::after{
+    content:"";
+    position:absolute; inset:0;
+    background-image:repeating-linear-gradient(90deg, rgba(232,169,76,0.06) 0 1px, transparent 1px 40px);
+    pointer-events:none;
+  }
+  .top-inner{max-width:1180px;margin:0 auto;display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;position:relative;}
+  .brand-eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--amber); margin:0 0 6px;
+  }
+  h1.title{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:clamp(28px,4vw,42px);
+    margin:0;
+    letter-spacing:.01em;
+  }
+  .subtitle{font-size:13px;color:var(--parchment-2);margin-top:6px;max-width:520px;}
+  .stats-row{display:flex;gap:22px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--amber);}
+  .stats-row .stat b{display:block;font-size:20px;color:var(--parchment);font-family:'Fraunces',serif;font-weight:600;}
+
+  /* ---------- Toolbar ---------- */
+  .toolbar{
+    max-width:1180px;margin:-16px auto 0;padding:0 20px;position:relative;z-index:2;
+  }
+  .drawer{
+    background:var(--card-bg);
+    border:1px solid var(--line);
+    border-radius:10px;
+    box-shadow:var(--shadow);
+    padding:14px 16px;
+  }
+  .tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;}
+  .tab{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px; text-transform:uppercase; letter-spacing:.06em;
+    padding:6px 12px; border-radius:20px;
+    border:1px solid var(--line); background:transparent; cursor:pointer;
+    color:var(--ink); opacity:.7;
+  }
+  .tab:hover{opacity:1;}
+  .tab.active{background:var(--bottle-green); color:var(--parchment); border-color:var(--bottle-green); opacity:1;}
+
+  .controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;}
+  .controls input[type=text], .controls select{
+    font-family:'Source Sans 3',sans-serif;
+    padding:9px 12px; border:1px solid var(--line); border-radius:7px;
+    background:#fff; font-size:14px; color:var(--ink);
+  }
+  .controls input[type=text]{flex:1 1 200px;min-width:160px;}
+  .controls select{flex:0 1 150px;}
+  .spacer{flex:1;}
+
+  .mode-tabs{display:flex;gap:8px;margin-bottom:12px;}
+  .mode-tab{
+    font-family:'Fraunces',serif; font-weight:600; font-size:14px;
+    padding:8px 16px; border-radius:7px 7px 0 0; border:1px solid var(--line); border-bottom:none;
+    background:var(--parchment-2); color:#7a7159; cursor:pointer;
+  }
+  .mode-tab.active{background:var(--bottle-green); color:var(--parchment); border-color:var(--bottle-green);}
+  .panel{display:none;}
+  .panel.active{display:block;}
+
+  .continent-block{margin-bottom:26px;}
+  .continent-block-head{
+    display:flex; align-items:baseline; justify-content:space-between; gap:10px;
+    border-bottom:1px solid var(--brass); padding-bottom:7px; margin-bottom:12px; cursor:pointer;
+  }
+  .continent-block-head h3{font-family:'Fraunces',serif; font-size:17px; margin:0; color:var(--ink); display:flex; align-items:center; gap:7px;}
+  .continent-block-head .ccount{font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:#8a8265;}
+  .continent-block-head .chev{transition:transform .2s; font-size:12px; color:#8a8265;}
+  .continent-block-head.collapsed .chev{transform:rotate(-90deg);}
+  .continent-block.collapsed .country-mini-grid{display:none;}
+
+  .country-mini-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:9px;}
+  .country-mini-card{
+    background:var(--card-bg); border:1px solid var(--line); border-radius:8px; padding:10px 11px;
+    cursor:pointer; transition:border-color .15s, transform .1s; min-height:62px;
+    display:flex; flex-direction:column; justify-content:space-between;
+  }
+  .country-mini-card:hover{border-color:var(--brass); transform:translateY(-1px);}
+  .country-mini-card.has-bottles{background:linear-gradient(155deg, #f3e4bd, var(--card-bg) 70%); border-color:var(--brass);}
+  .country-mini-card .cn-name{font-size:12.5px; font-weight:600; color:var(--ink); line-height:1.25;}
+  .country-mini-card .cn-count{font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:var(--brass); margin-top:6px;}
+  .country-mini-card .cn-count.zero{color:#a89c87;}
+
+  .seg-toggle{display:flex; background:var(--card-bg); border:1px solid var(--line); border-radius:8px; overflow:hidden; flex-shrink:0;}
+  .seg-toggle button{
+    background:none; border:none; color:#7a7159; padding:9px 14px; font-size:13px; cursor:pointer;
+    font-family:'Source Sans 3',sans-serif; font-weight:600; white-space:nowrap;
+  }
+  .seg-toggle button.active{background:var(--bottle-green); color:var(--parchment);}
+
+  .continent-summary-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:16px; margin-top:6px;}
+  .continent-summary-card{
+    background:var(--card-bg); border:1px solid var(--line); border-radius:10px; padding:18px 18px 16px;
+    cursor:pointer; transition:border-color .15s, transform .1s; box-shadow:var(--shadow);
+  }
+  .continent-summary-card:hover{border-color:var(--brass); transform:translateY(-2px);}
+  .continent-summary-card h3{font-family:'Fraunces',serif; font-size:19px; margin:0 0 10px; color:var(--ink);}
+  .continent-summary-card .cs-row{display:flex; justify-content:space-between; align-items:baseline; font-size:12.5px; color:#6b6350; margin-bottom:4px;}
+  .continent-summary-card .cs-row b{font-family:'IBM Plex Mono',monospace; color:var(--ink); font-size:13px;}
+  .continent-progress-outer{width:100%; height:7px; background:var(--parchment-2); border-radius:5px; overflow:hidden; margin:10px 0 4px; border:1px solid var(--line);}
+  .continent-progress-inner{height:100%; background:linear-gradient(90deg, var(--brass), var(--amber));}
+
+  .radio-group{display:flex; gap:8px; flex-wrap:wrap;}
+  .radio-pill{
+    display:flex; align-items:center; gap:6px; padding:8px 13px; border-radius:20px;
+    border:1px solid var(--line); background:#fff; font-size:13px; cursor:pointer; user-select:none;
+    transition:background .12s, border-color .12s;
+  }
+  .radio-pill input{accent-color:var(--bottle-green); margin:0; cursor:pointer;}
+  .radio-pill:has(input:checked){background:var(--bottle-green); border-color:var(--bottle-green); color:var(--parchment);}
+
+  .multiselect{position:relative; flex:1 1 160px; min-width:140px;}
+  .ms-toggle{
+    width:100%; text-align:left; font-family:'Source Sans 3',sans-serif; font-size:14px;
+    padding:9px 30px 9px 12px; border:1px solid var(--line); border-radius:7px; background:#fff url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="%236b6350" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>') no-repeat right 10px center;
+    color:var(--ink); cursor:pointer;
+  }
+  .ms-toggle.has-selection{border-color:var(--brass); background-color:#fbf1de;}
+  .ms-panel{
+    display:none; position:absolute; top:calc(100% + 4px); left:0; min-width:220px; max-width:280px;
+    max-height:260px; overflow-y:auto; background:#fff; border:1px solid var(--line); border-radius:8px;
+    box-shadow:var(--shadow); z-index:20; padding:8px;
+  }
+  .ms-panel.open{display:block;}
+  .ms-panel .ms-search{
+    width:100%; padding:7px 9px; border:1px solid var(--line); border-radius:6px; font-size:13px;
+    margin-bottom:7px; font-family:'Source Sans 3',sans-serif;
+  }
+  .ms-panel .ms-actions{display:flex; justify-content:space-between; margin-bottom:6px;}
+  .ms-panel .ms-actions button{
+    background:none; border:none; color:var(--bottle-green); font-size:11.5px; font-weight:600;
+    cursor:pointer; text-decoration:underline; padding:0; font-family:'Source Sans 3',sans-serif;
+  }
+  .ms-option{
+    display:flex; align-items:center; gap:8px; padding:6px 4px; font-size:13.5px; cursor:pointer;
+    border-radius:5px;
+  }
+  .ms-option:hover{background:var(--parchment-2);}
+  .ms-option input{accent-color:var(--bottle-green); margin:0; cursor:pointer; flex-shrink:0;}
+  .ms-option .ms-count{margin-left:auto; font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:#8a8265;}
+
+  .backup-banner{
+    max-width:1180px; margin:0 auto; padding:0 20px;
+  }
+  .backup-banner-inner{
+    display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+    background:#fbeee0; border:1px solid var(--burgundy); border-radius:8px;
+    padding:10px 14px; margin-top:14px; box-shadow:var(--shadow);
+  }
+  .bb-icon{font-size:16px; flex-shrink:0;}
+  .bb-text{font-size:13px; color:#5a2a2a; flex:1 1 220px;}
+  .bb-dismiss{
+    background:none; border:none; font-size:19px; line-height:1; color:#8a5555; cursor:pointer;
+    padding:2px 4px; flex-shrink:0;
+  }
+
+  .login-gate{
+    position:fixed; inset:0; background:var(--bottle-green-dk); z-index:200;
+    display:flex; align-items:center; justify-content:center; padding:20px;
+  }
+  .login-box{
+    background:var(--parchment); border-radius:14px; padding:32px 28px; max-width:380px; width:100%;
+    box-shadow:0 20px 60px rgba(0,0,0,0.4);
+  }
+  .login-box label{font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:.04em; color:#5a5340; display:block; margin-bottom:4px;}
+  .login-box input{
+    width:100%; padding:10px 12px; border:1px solid var(--line); border-radius:7px;
+    font-family:'Source Sans 3',sans-serif; font-size:15px; background:#fff; color:var(--ink);
+  }
+  .login-hint{font-size:11.5px; color:#8a8265; margin:8px 0 0; text-align:center;}
+  .login-error{font-size:12.5px; color:var(--burgundy); text-align:center; margin:14px 0 0; min-height:1px;}
+  .user-badge{
+    display:flex; align-items:center; gap:8px; font-family:'IBM Plex Mono',monospace; font-size:11.5px;
+    color:var(--amber); flex-shrink:0;
+  }
+  .user-badge button{
+    background:none; border:1px solid rgba(232,169,76,0.5); color:var(--amber); border-radius:14px;
+    padding:3px 10px; font-size:10.5px; cursor:pointer; font-family:'Source Sans 3',sans-serif;
+  }
+  .user-badge button:hover{background:rgba(232,169,76,0.15);}
+  .btn{
+    font-family:'Source Sans 3',sans-serif;
+    font-weight:600; font-size:13.5px;
+    padding:9px 16px; border-radius:7px; border:1px solid transparent;
+    cursor:pointer; display:inline-flex; align-items:center; gap:6px;
+    transition:transform .06s ease;
+  }
+  .btn:active{transform:scale(.97);}
+  .btn-primary{background:var(--bottle-green); color:var(--parchment);}
+  .btn-primary:hover{background:var(--bottle-green-dk);}
+  .btn-ghost{background:transparent;border-color:var(--line);color:var(--ink);}
+  .btn-ghost:hover{background:var(--parchment-2);}
+  .btn-danger{background:var(--burgundy); color:#fbf1ea;}
+  .btn-danger:hover{filter:brightness(1.1);}
+  .btn-sm{padding:6px 11px;font-size:12.5px;}
+
+  /* ---------- Grid ---------- */
+  .content{max-width:1180px;margin:0 auto;padding:22px 20px 60px;}
+  .grid{
+    display:grid; grid-template-columns:repeat(auto-fill,minmax(190px,1fr)); gap:18px;
+    margin-top:18px;
+  }
+  .card{
+    background:var(--card-bg);
+    border:1px solid var(--line);
+    border-radius:4px 4px 10px 10px;
+    box-shadow:var(--shadow);
+    cursor:pointer;
+    position:relative;
+    overflow:hidden;
+    transition:transform .12s ease, box-shadow .12s ease;
+  }
+  .card:hover{transform:translateY(-3px); box-shadow:0 10px 24px rgba(21,42,32,0.24);}
+  .card .photo-wrap{
+    aspect-ratio:1/1; background:#e4dcc6 url('') center/cover;
+    display:flex;align-items:center;justify-content:center;
+    position:relative; overflow:hidden;
+  }
+  .card .photo-wrap img{width:100%;height:100%;object-fit:cover;display:block;}
+  .card .photo-wrap .no-photo{font-family:'IBM Plex Mono',monospace;font-size:10px;color:#9c8f6c;text-align:center;padding:8px;}
+  .corner{position:absolute; width:14px; height:14px; border:2px solid var(--brass); opacity:.85;}
+  .corner.tl{top:6px;left:6px;border-right:none;border-bottom:none;}
+  .corner.tr{top:6px;right:6px;border-left:none;border-bottom:none;}
+  .card .label{
+    padding:10px 12px 12px;
+    border-top:1px dashed var(--brass);
+    position:relative;
+  }
+  .card .label::before{
+    content:""; position:absolute; top:-4px; left:50%; transform:translateX(-50%);
+    width:8px; height:8px; border-radius:50%; background:var(--parchment);
+    border:1px solid var(--brass);
+  }
+  .card .name{font-family:'Fraunces',serif;font-weight:600;font-size:15px;line-height:1.25;margin:0 0 4px;}
+  .card .meta{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#6b6350;display:flex;justify-content:space-between;gap:6px;}
+  .card .tag-type{
+    display:inline-block; margin-top:6px; font-size:10px; font-family:'IBM Plex Mono',monospace;
+    text-transform:uppercase; letter-spacing:.05em; padding:2px 8px; border-radius:10px;
+    background:var(--bottle-green); color:var(--parchment);
+  }
+
+  .empty-state{
+    text-align:center; padding:70px 20px; color:#7a7159;
+  }
+  .empty-state h3{font-family:'Fraunces',serif;font-size:22px;color:var(--ink);margin-bottom:6px;}
+
+  /* ---------- Modal ---------- */
+  .modal-backdrop{
+    position:fixed; inset:0; background:rgba(21,20,15,0.55);
+    display:none; align-items:flex-start; justify-content:center;
+    padding:30px 16px; overflow-y:auto; z-index:50;
+  }
+  .modal-backdrop.open{display:flex;}
+  .modal{
+    background:var(--parchment); border-radius:12px; max-width:640px; width:100%;
+    box-shadow:0 20px 60px rgba(0,0,0,0.4); overflow:hidden; margin-bottom:30px;
+  }
+  .modal-head{
+    background:var(--bottle-green); color:var(--parchment); padding:16px 22px;
+    display:flex; justify-content:space-between; align-items:center;
+  }
+  .modal-head h2{font-family:'Fraunces',serif;font-size:20px;margin:0;font-weight:600;}
+  .modal-head button{background:none;border:none;color:var(--parchment);font-size:22px;cursor:pointer;line-height:1;}
+  .modal-body{padding:22px;}
+  .form-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px 14px;}
+  .form-grid .full{grid-column:1/-1;}
+  label{font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:.04em; color:#5a5340; display:block; margin-bottom:4px;}
+  input[type=text], input[type=number], input[type=date], select, textarea{
+    width:100%; padding:9px 10px; border:1px solid var(--line); border-radius:6px;
+    font-family:'Source Sans 3',sans-serif; font-size:14px; background:#fff; color:var(--ink);
+  }
+  textarea{resize:vertical; min-height:60px;}
+  .photo-input-row{display:flex; align-items:center; gap:12px;}
+  .photo-preview{
+    width:90px; height:90px; border-radius:6px; background:#e4dcc6; overflow:hidden;
+    border:1px solid var(--line); flex-shrink:0; display:flex; align-items:center; justify-content:center;
+  }
+  .photo-preview img{width:100%;height:100%;object-fit:cover;}
+  .photo-preview span{font-size:9px;color:#8a8265;text-align:center;font-family:'IBM Plex Mono',monospace;}
+  .modal-footer{display:flex; justify-content:flex-end; gap:10px; margin-top:18px; padding-top:16px; border-top:1px solid var(--line);}
+
+  /* Detail modal */
+  .detail-photo{width:100%; aspect-ratio:4/3; background:#e4dcc6; overflow:hidden;}
+  .detail-photo img{width:100%;height:100%;object-fit:contain; background:#0f1a14;}
+  .detail-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px 20px; margin:18px 0;}
+  .detail-grid .item .k{font-family:'IBM Plex Mono',monospace; font-size:10.5px; text-transform:uppercase; letter-spacing:.05em; color:#8a8265;}
+  .detail-grid .item .v{font-size:14.5px; margin-top:2px;}
+  .detail-notes{font-size:14px; line-height:1.5; background:#fff; border:1px solid var(--line); border-radius:8px; padding:12px 14px; margin-top:6px;}
+
+  .toast{
+    position:fixed; bottom:22px; left:50%; transform:translateX(-50%);
+    background:var(--ink); color:var(--parchment); padding:11px 20px; border-radius:8px;
+    font-size:13.5px; box-shadow:var(--shadow); z-index:100; opacity:0; pointer-events:none;
+    transition:opacity .25s ease, transform .25s ease;
+  }
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(-6px);}
+
+  #importFile{display:none;}
+
+  @media (max-width:600px){
+    .form-grid{grid-template-columns:1fr;}
+    .detail-grid{grid-template-columns:1fr;}
+    .stats-row{gap:14px;}
+  }
+</style>
+</head>
+<body>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<div class="login-gate" id="loginGate">
+  <div class="login-box">
+    <p class="brand-eyebrow" style="text-align:center;">The Cabinet</p>
+    <h1 style="font-family:'Fraunces',serif; text-align:center; font-size:26px; margin:0 0 4px;">Miniatures Collection Atlas</h1>
+    <p style="text-align:center; font-size:13px; color:#5a5340; margin:0 0 24px;">Your bottles, synced to your own private space in the shared cellar.</p>
+
+    <div id="loginStepEmail">
+      <label>Email address</label>
+      <input type="text" id="loginEmail" placeholder="you@example.com" autocomplete="email">
+      <button class="btn btn-primary" id="sendCodeBtn" style="width:100%; margin-top:12px;">Send me a code</button>
+      <p class="login-hint">We'll email you a 6-digit code — no password needed.</p>
+    </div>
+
+    <div id="loginStepCode" style="display:none;">
+      <label>6-digit code</label>
+      <input type="text" id="loginCode" placeholder="123456" inputmode="numeric" maxlength="6">
+      <button class="btn btn-primary" id="verifyCodeBtn" style="width:100%; margin-top:12px;">Verify &amp; sign in</button>
+      <button class="btn btn-ghost btn-sm" id="backToEmailBtn" style="width:100%; margin-top:8px;">Use a different email</button>
+    </div>
+
+    <p class="login-error" id="loginError"></p>
+  </div>
+</div>
+
+<header class="top">
+  <div class="top-inner">
+    <div>
+      <p class="brand-eyebrow">The Cabinet · Shared Cellar</p>
+      <h1 class="title">Miniatures Collection Atlas</h1>
+      <p class="subtitle">A specimen ledger for 5cl &amp; 50ml bottles — catalogued by name, origin, and character.</p>
+    </div>
+    <div class="user-badge" id="userBadge">
+      <span id="userEmailLabel"></span>
+      <button id="signOutBtn">Sign out</button>
+    </div>
+    <div class="stats-row">
+      <div class="stat"><b id="statTotal">0</b>bottles</div>
+      <div class="stat"><b id="statCountries">0</b>countries</div>
+      <div class="stat"><b id="statCoverage">0 / 199</b>world coverage</div>
+      <div class="stat"><b id="statTypes">0</b>categories</div>
+    </div>
+  </div>
+</header>
+
+<div class="backup-banner" id="backupBanner" style="display:none;">
+  <div class="backup-banner-inner">
+    <span class="bb-icon">⚠</span>
+    <span class="bb-text" id="backupBannerText"></span>
+    <button class="btn btn-primary btn-sm" id="backupBannerExportBtn">Export now</button>
+    <button class="bb-dismiss" id="backupBannerDismiss" title="Remind me later">&times;</button>
+  </div>
+</div>
+
+<div class="toolbar">
+  <div class="drawer">
+    <div class="mode-tabs">
+      <button class="mode-tab active" id="modeBrowseBtn">🗂 Browse by region</button>
+      <button class="mode-tab" id="modeSearchBtn">🔍 Search &amp; filter</button>
+      <button class="mode-tab" id="modeCountriesBtn">🌍 World coverage</button>
+    </div>
+
+    <div class="panel active" id="browsePanel">
+      <div class="tabs" id="continentTabs"></div>
+    </div>
+
+    <div class="panel" id="countriesPanel">
+      <div class="controls" style="margin-bottom:12px;">
+        <div class="seg-toggle" id="coverageViewToggle">
+          <button data-view="countries" class="active">By country</button>
+          <button data-view="continents">By continent</button>
+        </div>
+        <input type="text" id="countrySearchInput" placeholder="Search countries…">
+        <div class="radio-group" id="coverageFilterGroup">
+          <label class="radio-pill"><input type="radio" name="coverageFilter" value="all" checked><span>All Countries</span></label>
+          <label class="radio-pill"><input type="radio" name="coverageFilter" value="have"><span>Have</span></label>
+          <label class="radio-pill"><input type="radio" name="coverageFilter" value="missing"><span>Pending</span></label>
+        </div>
+      </div>
+      <div id="countriesContainer"></div>
+    </div>
+
+    <div class="panel" id="searchPanel">
+      <div class="controls" style="margin-bottom:0;">
+        <input type="text" id="searchInput" placeholder="Search by name, brand, or note…">
+        <div class="multiselect" id="brandMultiselect">
+          <button type="button" class="ms-toggle" id="brandMsToggle">All brands</button>
+          <div class="ms-panel" id="brandMsPanel"></div>
+        </div>
+        <div class="multiselect" id="typeMultiselect">
+          <button type="button" class="ms-toggle" id="typeMsToggle">All types</button>
+          <div class="ms-panel" id="typeMsPanel"></div>
+        </div>
+        <div class="multiselect" id="countryMultiselect">
+          <button type="button" class="ms-toggle" id="countryMsToggle">All countries</button>
+          <div class="ms-panel" id="countryMsPanel"></div>
+        </div>
+        <select id="sortSelect">
+          <option value="dateDesc">Newest first</option>
+          <option value="dateAsc">Oldest first</option>
+          <option value="nameAsc">Name A–Z</option>
+          <option value="countryAsc">Country A–Z</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="controls" style="margin-top:12px;">
+      <div class="spacer"></div>
+      <button class="btn btn-ghost btn-sm" id="exportBtn">⬇ Export</button>
+      <button class="btn btn-ghost btn-sm" id="importBtn">⬆ Import</button>
+      <input type="file" id="importFile" accept="application/json">
+      <button class="btn btn-primary" id="addBtn">+ Add bottle</button>
+    </div>
+  </div>
+</div>
+
+<div class="content">
+  <div class="grid" id="grid"></div>
+  <div class="empty-state" id="emptyState" style="display:none;">
+    <h3>No specimens match this view</h3>
+    <p>Try clearing filters, or add a new bottle to the ledger.</p>
+  </div>
+</div>
+
+<!-- Add/Edit Modal -->
+<div class="modal-backdrop" id="editBackdrop">
+  <div class="modal">
+    <div class="modal-head">
+      <h2 id="editModalTitle">Add bottle</h2>
+      <button id="editClose">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="full">
+          <label>Photo</label>
+          <div class="photo-input-row">
+            <div class="photo-preview" id="photoPreview"><span>No photo</span></div>
+            <div>
+              <input type="file" id="photoInput" accept="image/*">
+              <div style="font-size:11px;color:#8a8265;margin-top:4px;">Auto-compressed to keep the archive light.</div>
+            </div>
+          </div>
+        </div>
+        <div class="full">
+          <label>Name *</label>
+          <input type="text" id="fName" placeholder="e.g. Amrut Fusion">
+        </div>
+        <div>
+          <label>Brand / Distillery</label>
+          <input type="text" id="fBrand" placeholder="e.g. Amrut Distilleries">
+        </div>
+        <div>
+          <label>Type of liquor *</label>
+          <select id="fType">
+            <option>Whisky</option><option>Vodka</option><option>Gin</option>
+            <option>Rum</option><option>Tequila</option><option>Brandy/Cognac</option>
+            <option>Liqueur</option><option>Wine</option><option>Beer</option>
+            <option>Arrack</option><option>Other</option>
+          </select>
+        </div>
+        <div>
+          <label>Country of origin *</label>
+          <input type="text" id="fCountry" list="countryList" placeholder="e.g. India">
+          <datalist id="countryList"></datalist>
+        </div>
+        <div>
+          <label>Continent</label>
+          <select id="fContinent">
+            <option>Asia</option><option>Europe</option><option>Africa</option>
+            <option>North America</option><option>South America</option>
+            <option>Oceania</option><option>Other</option>
+          </select>
+        </div>
+        <div>
+          <label>ABV %</label>
+          <input type="number" id="fAbv" step="0.1" placeholder="e.g. 50">
+        </div>
+        <div>
+          <label>Volume (ml)</label>
+          <input type="number" id="fVolume" placeholder="e.g. 50" value="50">
+        </div>
+        <div>
+          <label>Vintage / Batch year</label>
+          <input type="text" id="fVintage" placeholder="e.g. NAS or 2021">
+        </div>
+        <div>
+          <label>Date acquired</label>
+          <input type="date" id="fDate">
+        </div>
+        <div>
+          <label>Source / where acquired</label>
+          <input type="text" id="fSource" placeholder="e.g. The Whisky Exchange, London">
+        </div>
+        <div>
+          <label>Price paid</label>
+          <input type="text" id="fPrice" placeholder="e.g. £6.50">
+        </div>
+        <div class="full">
+          <label>Tasting notes / remarks</label>
+          <textarea id="fNotes" placeholder="Notes on flavour, condition, provenance, or story behind the bottle…"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" id="editCancel">Cancel</button>
+        <button class="btn btn-primary" id="editSave">Save bottle</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Detail Modal -->
+<div class="modal-backdrop" id="detailBackdrop">
+  <div class="modal">
+    <div class="modal-head">
+      <h2 id="detailName">Bottle</h2>
+      <button id="detailClose">&times;</button>
+    </div>
+    <div class="detail-photo" id="detailPhotoWrap"></div>
+    <div class="modal-body">
+      <div class="detail-grid" id="detailGrid"></div>
+      <div>
+        <div class="k" style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:#8a8265;">Notes</div>
+        <div class="detail-notes" id="detailNotes">—</div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-danger" id="detailDelete">Delete</button>
+        <button class="btn btn-ghost" id="detailEdit">Edit</button>
+        <button class="btn btn-primary" id="detailClose2">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ---------------- Supabase ----------------
+const SUPABASE_URL = 'https://fyitfyccwyxmmxzfhxul.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ5aXRmeWNjd3l4bW14emZoeHVsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM2NzU5NDMsImV4cCI6MjA5OTI1MTk0M30.GxgnckGQsDQrcPYKOAO9kX8--nJfyG94nYtXzHSTvp0';
+let supabaseClient = null;
+let supabaseReady = false;
+try{
+  if(typeof supabase === 'undefined') throw new Error('Supabase library did not load from the CDN — check your internet connection and refresh.');
+  supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  supabaseReady = true;
+}catch(e){
+  console.error('Supabase init failed', e);
+  window.addEventListener('load', showSupabaseLoadError);
+  if(document.readyState === 'complete' || document.readyState === 'interactive'){ showSupabaseLoadError(); }
+  function showSupabaseLoadError(){
+    const err = document.getElementById('loginError');
+    if(err) err.textContent = 'Could not load the sync library (' + e.message + '). Please refresh the page.';
+    const btn = document.getElementById('sendCodeBtn');
+    if(btn){ btn.disabled = true; btn.textContent = 'Sync unavailable'; }
+  }
+}
+let currentUser = null;
+const PHOTO_BUCKET = 'bottle-photos';
+
+// ---------------- State ----------------
+let bottles = [];         // in-memory collection
+let editingId = null;     // id currently being edited, null = adding new
+let pendingPhoto = null;  // base64 string staged for save
+let pendingPhotoIsNew = false; // true when the staged photo needs uploading on save
+let lastExportAt = null;  // timestamp (ms) of last successful export, persisted
+let bannerDismissedAt = null; // session-only dismissal, resets on reload
+let activeContinent = "All";
+let viewMode = "browse"; // 'browse' | 'search' | 'countries'
+let collapsedContinents = {};
+let countrySearchTerm = "";
+let coverageFilter = "all";
+let coverageView = "countries"; // 'countries' | 'continents'
+let continentScope = null;
+
+const msState = {
+  brand:   { selected: [], searchTerm: "" },
+  type:    { selected: [], searchTerm: "" },
+  country: { selected: [], searchTerm: "" }
+};
+
+const CONTINENTS = ["Asia","Europe","Africa","North America","South America","Oceania"];
+const COUNTRIES = [
+  {id:"india",name:"India",continent:"Asia"},
+  {id:"japan",name:"Japan",continent:"Asia"},
+  {id:"taiwan",name:"Taiwan",continent:"Asia"},
+  {id:"china",name:"China",continent:"Asia"},
+  {id:"south-korea",name:"South Korea",continent:"Asia"},
+  {id:"israel",name:"Israel",continent:"Asia"},
+  {id:"pakistan",name:"Pakistan",continent:"Asia"},
+  {id:"thailand",name:"Thailand",continent:"Asia"},
+  {id:"sri-lanka",name:"Sri Lanka",continent:"Asia"},
+  {id:"nepal",name:"Nepal",continent:"Asia"},
+  {id:"bhutan",name:"Bhutan",continent:"Asia"},
+  {id:"bangladesh",name:"Bangladesh",continent:"Asia"},
+  {id:"myanmar",name:"Myanmar",continent:"Asia"},
+  {id:"vietnam",name:"Vietnam",continent:"Asia"},
+  {id:"cambodia",name:"Cambodia",continent:"Asia"},
+  {id:"laos",name:"Laos",continent:"Asia"},
+  {id:"malaysia",name:"Malaysia",continent:"Asia"},
+  {id:"singapore",name:"Singapore",continent:"Asia"},
+  {id:"indonesia",name:"Indonesia",continent:"Asia"},
+  {id:"philippines",name:"Philippines",continent:"Asia"},
+  {id:"mongolia",name:"Mongolia",continent:"Asia"},
+  {id:"north-korea",name:"North Korea",continent:"Asia"},
+  {id:"kazakhstan",name:"Kazakhstan",continent:"Asia"},
+  {id:"uzbekistan",name:"Uzbekistan",continent:"Asia"},
+  {id:"turkmenistan",name:"Turkmenistan",continent:"Asia"},
+  {id:"kyrgyzstan",name:"Kyrgyzstan",continent:"Asia"},
+  {id:"tajikistan",name:"Tajikistan",continent:"Asia"},
+  {id:"afghanistan",name:"Afghanistan",continent:"Asia"},
+  {id:"iran",name:"Iran",continent:"Asia"},
+  {id:"iraq",name:"Iraq",continent:"Asia"},
+  {id:"saudi-arabia",name:"Saudi Arabia",continent:"Asia"},
+  {id:"uae",name:"United Arab Emirates",continent:"Asia"},
+  {id:"qatar",name:"Qatar",continent:"Asia"},
+  {id:"kuwait",name:"Kuwait",continent:"Asia"},
+  {id:"bahrain",name:"Bahrain",continent:"Asia"},
+  {id:"oman",name:"Oman",continent:"Asia"},
+  {id:"yemen",name:"Yemen",continent:"Asia"},
+  {id:"jordan",name:"Jordan",continent:"Asia"},
+  {id:"lebanon",name:"Lebanon",continent:"Asia"},
+  {id:"syria",name:"Syria",continent:"Asia"},
+  {id:"turkey",name:"Turkey",continent:"Asia"},
+  {id:"cyprus",name:"Cyprus",continent:"Asia"},
+  {id:"georgia",name:"Georgia",continent:"Asia"},
+  {id:"armenia",name:"Armenia",continent:"Asia"},
+  {id:"azerbaijan",name:"Azerbaijan",continent:"Asia"},
+  {id:"maldives",name:"Maldives",continent:"Asia"},
+  {id:"timor-leste",name:"Timor-Leste",continent:"Asia"},
+  {id:"brunei",name:"Brunei",continent:"Asia"},
+  {id:"palestine",name:"Palestine",continent:"Asia"},
+  {id:"scotland",name:"Scotland",continent:"Europe"},
+  {id:"england",name:"England",continent:"Europe"},
+  {id:"wales",name:"Wales",continent:"Europe"},
+  {id:"northern-ireland",name:"Northern Ireland",continent:"Europe"},
+  {id:"ireland",name:"Ireland",continent:"Europe"},
+  {id:"germany",name:"Germany",continent:"Europe"},
+  {id:"france",name:"France",continent:"Europe"},
+  {id:"sweden",name:"Sweden",continent:"Europe"},
+  {id:"finland",name:"Finland",continent:"Europe"},
+  {id:"denmark",name:"Denmark",continent:"Europe"},
+  {id:"norway",name:"Norway",continent:"Europe"},
+  {id:"iceland",name:"Iceland",continent:"Europe"},
+  {id:"netherlands",name:"Netherlands",continent:"Europe"},
+  {id:"belgium",name:"Belgium",continent:"Europe"},
+  {id:"switzerland",name:"Switzerland",continent:"Europe"},
+  {id:"austria",name:"Austria",continent:"Europe"},
+  {id:"spain",name:"Spain",continent:"Europe"},
+  {id:"italy",name:"Italy",continent:"Europe"},
+  {id:"portugal",name:"Portugal",continent:"Europe"},
+  {id:"czech-republic",name:"Czech Republic",continent:"Europe"},
+  {id:"poland",name:"Poland",continent:"Europe"},
+  {id:"hungary",name:"Hungary",continent:"Europe"},
+  {id:"slovakia",name:"Slovakia",continent:"Europe"},
+  {id:"slovenia",name:"Slovenia",continent:"Europe"},
+  {id:"croatia",name:"Croatia",continent:"Europe"},
+  {id:"bosnia",name:"Bosnia and Herzegovina",continent:"Europe"},
+  {id:"serbia",name:"Serbia",continent:"Europe"},
+  {id:"montenegro",name:"Montenegro",continent:"Europe"},
+  {id:"north-macedonia",name:"North Macedonia",continent:"Europe"},
+  {id:"albania",name:"Albania",continent:"Europe"},
+  {id:"greece",name:"Greece",continent:"Europe"},
+  {id:"bulgaria",name:"Bulgaria",continent:"Europe"},
+  {id:"romania",name:"Romania",continent:"Europe"},
+  {id:"moldova",name:"Moldova",continent:"Europe"},
+  {id:"ukraine",name:"Ukraine",continent:"Europe"},
+  {id:"belarus",name:"Belarus",continent:"Europe"},
+  {id:"russia",name:"Russia",continent:"Europe"},
+  {id:"estonia",name:"Estonia",continent:"Europe"},
+  {id:"latvia",name:"Latvia",continent:"Europe"},
+  {id:"lithuania",name:"Lithuania",continent:"Europe"},
+  {id:"luxembourg",name:"Luxembourg",continent:"Europe"},
+  {id:"liechtenstein",name:"Liechtenstein",continent:"Europe"},
+  {id:"monaco",name:"Monaco",continent:"Europe"},
+  {id:"andorra",name:"Andorra",continent:"Europe"},
+  {id:"san-marino",name:"San Marino",continent:"Europe"},
+  {id:"vatican",name:"Vatican City",continent:"Europe"},
+  {id:"malta",name:"Malta",continent:"Europe"},
+  {id:"south-africa",name:"South Africa",continent:"Africa"},
+  {id:"kenya",name:"Kenya",continent:"Africa"},
+  {id:"egypt",name:"Egypt",continent:"Africa"},
+  {id:"morocco",name:"Morocco",continent:"Africa"},
+  {id:"algeria",name:"Algeria",continent:"Africa"},
+  {id:"tunisia",name:"Tunisia",continent:"Africa"},
+  {id:"libya",name:"Libya",continent:"Africa"},
+  {id:"nigeria",name:"Nigeria",continent:"Africa"},
+  {id:"ghana",name:"Ghana",continent:"Africa"},
+  {id:"ethiopia",name:"Ethiopia",continent:"Africa"},
+  {id:"tanzania",name:"Tanzania",continent:"Africa"},
+  {id:"uganda",name:"Uganda",continent:"Africa"},
+  {id:"rwanda",name:"Rwanda",continent:"Africa"},
+  {id:"zimbabwe",name:"Zimbabwe",continent:"Africa"},
+  {id:"zambia",name:"Zambia",continent:"Africa"},
+  {id:"botswana",name:"Botswana",continent:"Africa"},
+  {id:"namibia",name:"Namibia",continent:"Africa"},
+  {id:"mozambique",name:"Mozambique",continent:"Africa"},
+  {id:"angola",name:"Angola",continent:"Africa"},
+  {id:"senegal",name:"Senegal",continent:"Africa"},
+  {id:"ivory-coast",name:"Ivory Coast",continent:"Africa"},
+  {id:"cameroon",name:"Cameroon",continent:"Africa"},
+  {id:"dr-congo",name:"DR Congo",continent:"Africa"},
+  {id:"madagascar",name:"Madagascar",continent:"Africa"},
+  {id:"mauritius",name:"Mauritius",continent:"Africa"},
+  {id:"seychelles",name:"Seychelles",continent:"Africa"},
+  {id:"sudan",name:"Sudan",continent:"Africa"},
+  {id:"mali",name:"Mali",continent:"Africa"},
+  {id:"malawi",name:"Malawi",continent:"Africa"},
+  {id:"somalia",name:"Somalia",continent:"Africa"},
+  {id:"benin",name:"Benin",continent:"Africa"},
+  {id:"burkina-faso",name:"Burkina Faso",continent:"Africa"},
+  {id:"burundi",name:"Burundi",continent:"Africa"},
+  {id:"cabo-verde",name:"Cabo Verde",continent:"Africa"},
+  {id:"central-african-republic",name:"Central African Republic",continent:"Africa"},
+  {id:"chad",name:"Chad",continent:"Africa"},
+  {id:"comoros",name:"Comoros",continent:"Africa"},
+  {id:"congo",name:"Congo",continent:"Africa"},
+  {id:"djibouti",name:"Djibouti",continent:"Africa"},
+  {id:"equatorial-guinea",name:"Equatorial Guinea",continent:"Africa"},
+  {id:"eritrea",name:"Eritrea",continent:"Africa"},
+  {id:"eswatini",name:"Eswatini",continent:"Africa"},
+  {id:"gabon",name:"Gabon",continent:"Africa"},
+  {id:"gambia",name:"Gambia",continent:"Africa"},
+  {id:"guinea",name:"Guinea",continent:"Africa"},
+  {id:"guinea-bissau",name:"Guinea-Bissau",continent:"Africa"},
+  {id:"lesotho",name:"Lesotho",continent:"Africa"},
+  {id:"liberia",name:"Liberia",continent:"Africa"},
+  {id:"mauritania",name:"Mauritania",continent:"Africa"},
+  {id:"niger",name:"Niger",continent:"Africa"},
+  {id:"sao-tome-and-principe",name:"Sao Tome and Principe",continent:"Africa"},
+  {id:"sierra-leone",name:"Sierra Leone",continent:"Africa"},
+  {id:"south-sudan",name:"South Sudan",continent:"Africa"},
+  {id:"togo",name:"Togo",continent:"Africa"},
+  {id:"usa",name:"United States",continent:"North America"},
+  {id:"canada",name:"Canada",continent:"North America"},
+  {id:"mexico",name:"Mexico",continent:"North America"},
+  {id:"cuba",name:"Cuba",continent:"North America"},
+  {id:"jamaica",name:"Jamaica",continent:"North America"},
+  {id:"haiti",name:"Haiti",continent:"North America"},
+  {id:"dominican-republic",name:"Dominican Republic",continent:"North America"},
+  {id:"bahamas",name:"Bahamas",continent:"North America"},
+  {id:"barbados",name:"Barbados",continent:"North America"},
+  {id:"trinidad",name:"Trinidad and Tobago",continent:"North America"},
+  {id:"guatemala",name:"Guatemala",continent:"North America"},
+  {id:"belize",name:"Belize",continent:"North America"},
+  {id:"honduras",name:"Honduras",continent:"North America"},
+  {id:"el-salvador",name:"El Salvador",continent:"North America"},
+  {id:"nicaragua",name:"Nicaragua",continent:"North America"},
+  {id:"costa-rica",name:"Costa Rica",continent:"North America"},
+  {id:"panama",name:"Panama",continent:"North America"},
+  {id:"antigua-and-barbuda",name:"Antigua and Barbuda",continent:"North America"},
+  {id:"dominica",name:"Dominica",continent:"North America"},
+  {id:"grenada",name:"Grenada",continent:"North America"},
+  {id:"saint-kitts-and-nevis",name:"Saint Kitts and Nevis",continent:"North America"},
+  {id:"saint-lucia",name:"Saint Lucia",continent:"North America"},
+  {id:"saint-vincent-and-the-grenadines",name:"Saint Vincent and the Grenadines",continent:"North America"},
+  {id:"argentina",name:"Argentina",continent:"South America"},
+  {id:"brazil",name:"Brazil",continent:"South America"},
+  {id:"chile",name:"Chile",continent:"South America"},
+  {id:"peru",name:"Peru",continent:"South America"},
+  {id:"colombia",name:"Colombia",continent:"South America"},
+  {id:"venezuela",name:"Venezuela",continent:"South America"},
+  {id:"ecuador",name:"Ecuador",continent:"South America"},
+  {id:"bolivia",name:"Bolivia",continent:"South America"},
+  {id:"paraguay",name:"Paraguay",continent:"South America"},
+  {id:"uruguay",name:"Uruguay",continent:"South America"},
+  {id:"guyana",name:"Guyana",continent:"South America"},
+  {id:"suriname",name:"Suriname",continent:"South America"},
+  {id:"australia",name:"Australia",continent:"Oceania"},
+  {id:"new-zealand",name:"New Zealand",continent:"Oceania"},
+  {id:"fiji",name:"Fiji",continent:"Oceania"},
+  {id:"papua-new-guinea",name:"Papua New Guinea",continent:"Oceania"},
+  {id:"samoa",name:"Samoa",continent:"Oceania"},
+  {id:"tonga",name:"Tonga",continent:"Oceania"},
+  {id:"vanuatu",name:"Vanuatu",continent:"Oceania"},
+  {id:"solomon-islands",name:"Solomon Islands",continent:"Oceania"},
+  {id:"kiribati",name:"Kiribati",continent:"Oceania"},
+  {id:"marshall-islands",name:"Marshall Islands",continent:"Oceania"},
+  {id:"micronesia",name:"Micronesia",continent:"Oceania"},
+  {id:"nauru",name:"Nauru",continent:"Oceania"},
+  {id:"palau",name:"Palau",continent:"Oceania"},
+  {id:"tuvalu",name:"Tuvalu",continent:"Oceania"}
+];
+const COMMON_COUNTRIES = COUNTRIES.map(c=>c.name);
+
+function guessContinent(country){
+  if(!country) return "Other";
+  const key = country.trim().toLowerCase();
+  const hit = COUNTRIES.find(c=>c.name.toLowerCase()===key);
+  return hit ? hit.continent : "Other";
+}
+
+
+// ---------------- Storage (persists across sessions, per-user) ----------------
+function bottleToRow(b){
+  return {
+    id: b.id, user_id: currentUser.id, name: b.name, brand: b.brand, type: b.type,
+    country: b.country, continent: b.continent, abv: b.abv, volume: b.volume, vintage: b.vintage,
+    date_acquired: b.dateAcquired, source: b.source, price: b.price, notes: b.notes,
+    photo_url: b.photo || null, date_added: b.dateAdded
+  };
+}
+function rowToBottle(r){
+  return {
+    id: r.id, name: r.name, brand: r.brand, type: r.type, country: r.country, continent: r.continent,
+    abv: r.abv, volume: r.volume, vintage: r.vintage, dateAcquired: r.date_acquired, source: r.source,
+    price: r.price, notes: r.notes, photo: r.photo_url, dateAdded: r.date_added
+  };
+}
+
+async function loadFromStorage(){
+  try{
+    const { data, error } = await supabaseClient.from('bottles').select('*').order('date_added', { ascending:false });
+    if(error) throw error;
+    bottles = (data || []).map(rowToBottle);
+  }catch(e){
+    console.error('Load from Supabase failed', e);
+    showToast('Could not load your collection — check your connection');
+    bottles = [];
+  }
+}
+
+const photoUrlCache = {}; // storage path -> { url, expiresAt }
+
+async function uploadPhotoToSupabase(bottleId, dataUrl){
+  const blob = await (await fetch(dataUrl)).blob();
+  const path = `${currentUser.id}/${bottleId}.jpg`;
+  const { error: upErr } = await supabaseClient.storage.from(PHOTO_BUCKET).upload(path, blob, { upsert:true, contentType:'image/jpeg' });
+  if(upErr) throw upErr;
+  delete photoUrlCache[path];
+  return path; // store the durable path, not an expiring URL
+}
+
+async function getPhotoDisplayUrl(path){
+  if(!path) return null;
+  if(path.startsWith('data:') || path.startsWith('http')) return path; // already directly usable (local preview or legacy full URL)
+  const cached = photoUrlCache[path];
+  if(cached && cached.expiresAt > Date.now() + 60000) return cached.url;
+  try{
+    const { data, error } = await supabaseClient.storage.from(PHOTO_BUCKET).createSignedUrl(path, 60*60*24*7);
+    if(error) throw error;
+    photoUrlCache[path] = { url: data.signedUrl, expiresAt: Date.now() + 60*60*24*7*1000 };
+    return data.signedUrl;
+  }catch(e){
+    console.error('Could not resolve photo URL', e);
+    return null;
+  }
+}
+
+async function saveBottle(b){
+  try{
+    if(pendingPhotoIsNew && pendingPhoto){
+      b.photo = await uploadPhotoToSupabase(b.id, pendingPhoto);
+    }
+    const { error } = await supabaseClient.from('bottles').upsert(bottleToRow(b));
+    if(error) throw error;
+  }catch(e){
+    console.error('Bottle save failed', e);
+    showToast('Save failed — check your connection and try again');
+    throw e;
+  }
+}
+async function saveIndex(){ /* no-op: Supabase rows are the source of truth, no separate index needed */ }
+async function deleteBottleStorage(id){
+  try{
+    await supabaseClient.from('bottles').delete().eq('id', id);
+    await supabaseClient.storage.from(PHOTO_BUCKET).remove([`${currentUser.id}/${id}.jpg`]);
+  }catch(e){ console.error('Delete failed', e); }
+}
+async function loadLastExportAt(){
+  const v = localStorage.getItem('atlas-last-export-at-'+(currentUser?currentUser.id:'anon'));
+  lastExportAt = v ? parseInt(v,10) : null;
+}
+async function saveLastExportAt(ts){
+  lastExportAt = ts;
+  try{ localStorage.setItem('atlas-last-export-at-'+(currentUser?currentUser.id:'anon'), String(ts)); }
+  catch(e){ console.error('Could not save last export timestamp', e); }
+}
+
+// ---------------- Rendering ----------------
+function uniqueSorted(arr){ return [...new Set(arr.filter(Boolean))].sort((a,b)=>a.localeCompare(b)); }
+
+function bottleCountForCountry(countryName){
+  return bottles.filter(b=> (b.country||'').trim().toLowerCase() === countryName.trim().toLowerCase()).length;
+}
+function countriesCollectedCount(){
+  return COUNTRIES.filter(c=> bottleCountForCountry(c.name) > 0).length;
+}
+
+function populateFilterOptions(){
+  updateMsToggleLabel('type');
+  updateMsToggleLabel('country');
+  updateMsToggleLabel('brand');
+
+  const continents = ["All", ...uniqueSorted(bottles.map(b=>b.continent))];
+  const tabsEl = document.getElementById('continentTabs');
+  tabsEl.innerHTML = continents.map(c=>`<button class="tab ${c===activeContinent?'active':''}" data-continent="${escapeHtml(c)}">${escapeHtml(c)} ${c!=="All"? '('+bottles.filter(b=>b.continent===c).length+')':'('+bottles.length+')'}</button>`).join('');
+  tabsEl.querySelectorAll('.tab').forEach(btn=>{
+    btn.addEventListener('click', ()=>{ activeContinent = btn.dataset.continent; render(); });
+  });
+
+  document.getElementById('countryList').innerHTML = COMMON_COUNTRIES.map(c=>`<option value="${c}">`).join('');
+}
+
+function escapeHtml(str){
+  if(str===undefined||str===null) return '';
+  return String(str).replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+
+function getFiltered(){
+  const search = document.getElementById('searchInput').value.trim().toLowerCase();
+  const sort = document.getElementById('sortSelect').value;
+
+  let list = bottles.filter(b=>{
+    if(viewMode==='browse' && activeContinent!=="All" && b.continent!==activeContinent) return false;
+    if(msState.type.selected.length && !msState.type.selected.includes(b.type)) return false;
+    if(msState.country.selected.length && !msState.country.selected.includes(b.country)) return false;
+    if(msState.brand.selected.length && !msState.brand.selected.includes(b.brand)) return false;
+    if(search){
+      const hay = [b.name,b.brand,b.notes,b.source].join(' ').toLowerCase();
+      if(!hay.includes(search)) return false;
+    }
+    return true;
+  });
+
+  list.sort((a,b)=>{
+    if(sort==='nameAsc') return (a.name||'').localeCompare(b.name||'');
+    if(sort==='countryAsc') return (a.country||'').localeCompare(b.country||'');
+    if(sort==='dateAsc') return (a.dateAdded||0)-(b.dateAdded||0);
+    return (b.dateAdded||0)-(a.dateAdded||0); // dateDesc default
+  });
+  return list;
+}
+
+function daysSince(ts){
+  if(!ts) return Infinity;
+  return Math.floor((Date.now()-ts) / (1000*60*60*24));
+}
+
+function renderBackupBanner(){
+  const banner = document.getElementById('backupBanner');
+  const textEl = document.getElementById('backupBannerText');
+
+  if(bottles.length === 0){ banner.style.display='none'; return; }
+
+  const days = daysSince(lastExportAt);
+  const shouldNudge = days >= 7; // never exported (Infinity) or 7+ days ago
+  const dismissedRecently = bannerDismissedAt && (Date.now()-bannerDismissedAt) < (1000*60*60*12); // stays hidden for 12h after dismissal
+
+  if(!shouldNudge || dismissedRecently){
+    banner.style.display='none';
+    return;
+  }
+
+  textEl.textContent = lastExportAt
+    ? `Your data lives on Anthropic's servers, tied to this artifact — it's been ${days} days since your last backup. Export a copy to your device to be safe.`
+    : `Your data lives on Anthropic's servers, tied to this artifact — you haven't exported a personal backup yet. Download one to keep your collection safe.`;
+  banner.style.display='block';
+}
+
+function render(){
+  populateFilterOptions();
+  renderBackupBanner();
+  const grid = document.getElementById('grid');
+  const empty = document.getElementById('emptyState');
+  const list = getFiltered();
+
+  document.getElementById('statTotal').textContent = bottles.length;
+  document.getElementById('statCountries').textContent = uniqueSorted(bottles.map(b=>b.country)).length;
+  document.getElementById('statTypes').textContent = uniqueSorted(bottles.map(b=>b.type)).length;
+  document.getElementById('statCoverage').textContent = `${countriesCollectedCount()} / ${COUNTRIES.length}`;
+
+  if(list.length===0){
+    grid.innerHTML='';
+    empty.style.display='block';
+    return;
+  }
+  empty.style.display='none';
+
+  grid.innerHTML = list.map(b=>`
+    <div class="card" data-id="${b.id}">
+      <div class="photo-wrap" id="thumb-${b.id}">
+        <div class="corner tl"></div><div class="corner tr"></div>
+        ${b.photo ? `<div class="no-photo">···</div>` : `<div class="no-photo">NO<br>PHOTO</div>`}
+      </div>
+      <div class="label">
+        <p class="name">${escapeHtml(b.name)}</p>
+        <div class="meta"><span>${escapeHtml(b.country||'—')}</span><span>${b.volume?b.volume+'ml':''} ${b.abv?b.abv+'%':''}</span></div>
+        <span class="tag-type">${escapeHtml(b.type||'Other')}</span>
+      </div>
+    </div>
+  `).join('');
+
+  grid.querySelectorAll('.card').forEach(card=>{
+    card.addEventListener('click', ()=> openDetail(card.dataset.id));
+  });
+
+  list.forEach(b=>{
+    if(!b.photo) return;
+    getPhotoDisplayUrl(b.photo).then(url=>{
+      const wrap = document.getElementById('thumb-'+b.id);
+      if(wrap && url) wrap.innerHTML = `<div class="corner tl"></div><div class="corner tr"></div><img src="${url}" alt="${escapeHtml(b.name)}">`;
+    });
+  });
+}
+
+// ---------------- Add/Edit modal ----------------
+const editBackdrop = document.getElementById('editBackdrop');
+function openEditModal(bottle){
+  editingId = bottle ? bottle.id : null;
+  pendingPhoto = bottle ? bottle.photo : null; // storage path (existing) or null
+  pendingPhotoIsNew = false;
+  document.getElementById('editModalTitle').textContent = bottle ? 'Edit bottle' : 'Add bottle';
+  document.getElementById('fName').value = bottle?.name || '';
+  document.getElementById('fBrand').value = bottle?.brand || '';
+  document.getElementById('fType').value = bottle?.type || 'Whisky';
+  document.getElementById('fCountry').value = bottle?.country || '';
+  document.getElementById('fContinent').value = bottle?.continent || 'Asia';
+  document.getElementById('fAbv').value = bottle?.abv || '';
+  document.getElementById('fVolume').value = bottle?.volume || 50;
+  document.getElementById('fVintage').value = bottle?.vintage || '';
+  document.getElementById('fDate').value = bottle?.dateAcquired || '';
+  document.getElementById('fSource').value = bottle?.source || '';
+  document.getElementById('fPrice').value = bottle?.price || '';
+  document.getElementById('fNotes').value = bottle?.notes || '';
+  document.getElementById('photoInput').value = '';
+
+  const preview = document.getElementById('photoPreview');
+  if(pendingPhoto){
+    preview.innerHTML = `<span style="font-size:10px;">Loading…</span>`;
+    const openedForId = editingId;
+    getPhotoDisplayUrl(pendingPhoto).then(url=>{
+      if(editingId !== openedForId) return; // modal moved on, ignore stale response
+      preview.innerHTML = url ? `<img src="${url}">` : `<span>No photo</span>`;
+    });
+  }else{
+    preview.innerHTML = `<span>No photo</span>`;
+  }
+  editBackdrop.classList.add('open');
+}
+function closeEditModal(){ editBackdrop.classList.remove('open'); }
+function updatePhotoPreview(){
+  const p = document.getElementById('photoPreview');
+  p.innerHTML = pendingPhoto ? `<img src="${pendingPhoto}">` : `<span>No photo</span>`;
+}
+
+document.getElementById('fCountry').addEventListener('change', ()=>{
+  const c = document.getElementById('fCountry').value;
+  document.getElementById('fContinent').value = guessContinent(c);
+});
+document.getElementById('fCountry').addEventListener('blur', ()=>{
+  const c = document.getElementById('fCountry').value;
+  if(c) document.getElementById('fContinent').value = guessContinent(c);
+});
+
+document.getElementById('photoInput').addEventListener('change', (e)=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  compressImage(file, 800, 0.8).then(dataUrl=>{
+    pendingPhoto = dataUrl;
+    pendingPhotoIsNew = true;
+    updatePhotoPreview();
+  }).catch(()=> showToast('Could not read image'));
+});
+
+function compressImage(file, maxDim, quality){
+  return new Promise((resolve,reject)=>{
+    const reader = new FileReader();
+    reader.onload = (e)=>{
+      const img = new Image();
+      img.onload = ()=>{
+        let w=img.width, h=img.height;
+        if(w>h && w>maxDim){ h = Math.round(h*maxDim/w); w=maxDim; }
+        else if(h>=w && h>maxDim){ w = Math.round(w*maxDim/h); h=maxDim; }
+        const canvas = document.createElement('canvas');
+        canvas.width=w; canvas.height=h;
+        canvas.getContext('2d').drawImage(img,0,0,w,h);
+        resolve(canvas.toDataURL('image/jpeg', quality));
+      };
+      img.onerror = reject;
+      img.src = e.target.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+document.getElementById('addBtn').addEventListener('click', ()=> openEditModal(null));
+document.getElementById('editClose').addEventListener('click', closeEditModal);
+document.getElementById('editCancel').addEventListener('click', closeEditModal);
+editBackdrop.addEventListener('click', (e)=>{ if(e.target===editBackdrop) closeEditModal(); });
+
+document.getElementById('editSave').addEventListener('click', async ()=>{
+  const name = document.getElementById('fName').value.trim();
+  if(!name){ showToast('Name is required'); return; }
+  const country = document.getElementById('fCountry').value.trim();
+  const bottle = {
+    id: editingId || ('b_'+Date.now()+'_'+Math.random().toString(36).slice(2,8)),
+    name,
+    brand: document.getElementById('fBrand').value.trim(),
+    type: document.getElementById('fType').value,
+    country,
+    continent: document.getElementById('fContinent').value,
+    abv: document.getElementById('fAbv').value,
+    volume: document.getElementById('fVolume').value,
+    vintage: document.getElementById('fVintage').value.trim(),
+    dateAcquired: document.getElementById('fDate').value,
+    source: document.getElementById('fSource').value.trim(),
+    price: document.getElementById('fPrice').value.trim(),
+    notes: document.getElementById('fNotes').value.trim(),
+    photo: pendingPhoto,
+    dateAdded: editingId ? (bottles.find(b=>b.id===editingId)?.dateAdded || Date.now()) : Date.now()
+  };
+
+  const idx = bottles.findIndex(b=>b.id===bottle.id);
+  const wasNew = idx<0;
+
+  try{
+    await saveBottle(bottle); // uploads photo if needed and mutates bottle.photo to the storage path
+  }catch(e){
+    return; // saveBottle already showed a toast; keep the modal open so nothing is lost
+  }
+
+  if(idx>=0) bottles[idx]=bottle; else bottles.push(bottle);
+  pendingPhotoIsNew = false;
+  closeEditModal();
+  render();
+  showToast(wasNew ? 'Bottle added to the ledger' : 'Bottle updated');
+});
+
+// ---------------- Detail modal ----------------
+const detailBackdrop = document.getElementById('detailBackdrop');
+let detailId = null;
+function openDetail(id){
+  const b = bottles.find(x=>x.id===id);
+  if(!b) return;
+  detailId = id;
+  document.getElementById('detailName').textContent = b.name;
+  const photoWrap = document.getElementById('detailPhotoWrap');
+  const noPhotoHtml = `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#8a8265;font-family:'IBM Plex Mono',monospace;font-size:12px;">No photograph on file</div>`;
+  if(b.photo){
+    photoWrap.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#8a8265;font-size:12px;">Loading…</div>`;
+    getPhotoDisplayUrl(b.photo).then(url=>{
+      if(detailId !== id) return;
+      photoWrap.innerHTML = url ? `<img src="${url}">` : noPhotoHtml;
+    });
+  }else{
+    photoWrap.innerHTML = noPhotoHtml;
+  }
+  const fields = [
+    ['Brand', b.brand], ['Type', b.type], ['Country', b.country], ['Continent', b.continent],
+    ['ABV', b.abv?b.abv+'%':''], ['Volume', b.volume?b.volume+'ml':''],
+    ['Vintage / Batch', b.vintage], ['Date acquired', b.dateAcquired],
+    ['Source', b.source], ['Price paid', b.price]
+  ];
+  document.getElementById('detailGrid').innerHTML = fields.map(([k,v])=>`
+    <div class="item"><div class="k">${k}</div><div class="v">${escapeHtml(v)||'—'}</div></div>
+  `).join('');
+  document.getElementById('detailNotes').textContent = b.notes || 'No notes recorded.';
+  detailBackdrop.classList.add('open');
+}
+function closeDetail(){ detailBackdrop.classList.remove('open'); detailId=null; }
+document.getElementById('detailClose').addEventListener('click', closeDetail);
+document.getElementById('detailClose2').addEventListener('click', closeDetail);
+detailBackdrop.addEventListener('click', (e)=>{ if(e.target===detailBackdrop) closeDetail(); });
+
+document.getElementById('detailEdit').addEventListener('click', ()=>{
+  const b = bottles.find(x=>x.id===detailId);
+  closeDetail();
+  openEditModal(b);
+});
+document.getElementById('detailDelete').addEventListener('click', async ()=>{
+  if(!confirm('Remove this bottle from the ledger? This cannot be undone.')) return;
+  bottles = bottles.filter(b=>b.id!==detailId);
+  await deleteBottleStorage(detailId);
+  await saveIndex();
+  closeDetail();
+  render();
+  showToast('Bottle removed');
+});
+
+// ---------------- Filters/search live update ----------------
+['searchInput','sortSelect'].forEach(id=>{
+  document.getElementById(id).addEventListener('input', render);
+  document.getElementById(id).addEventListener('change', render);
+});
+
+// ---------------- Multi-select filters (brand / type / country) ----------------
+function getMsOptions(key){
+  if(key==='brand') return uniqueSorted(bottles.map(b=>b.brand));
+  if(key==='type') return uniqueSorted(bottles.map(b=>b.type));
+  if(key==='country') return COMMON_COUNTRIES.slice().sort((a,b)=>a.localeCompare(b));
+}
+const MS_LABELS = { brand:'brands', type:'types', country:'countries' };
+
+function updateMsToggleLabel(key){
+  const toggle = document.getElementById(key+'MsToggle');
+  const sel = msState[key].selected;
+  if(sel.length===0){
+    toggle.textContent = 'All ' + MS_LABELS[key];
+    toggle.classList.remove('has-selection');
+  }else if(sel.length===1){
+    toggle.textContent = sel[0];
+    toggle.classList.add('has-selection');
+  }else{
+    toggle.textContent = sel.length + ' ' + MS_LABELS[key] + ' selected';
+    toggle.classList.add('has-selection');
+  }
+}
+
+function renderMsPanel(key){
+  const state = msState[key];
+  const panel = document.getElementById(key+'MsPanel');
+  const allOptions = getMsOptions(key);
+  const term = state.searchTerm.toLowerCase();
+  const shown = term ? allOptions.filter(o=>o.toLowerCase().includes(term)) : allOptions;
+
+  panel.innerHTML = `
+    <input type="text" class="ms-search" placeholder="Filter list…" value="${escapeHtml(state.searchTerm)}">
+    <div class="ms-actions">
+      <button type="button" data-action="all">Select all</button>
+      <button type="button" data-action="clear">Clear</button>
+    </div>
+    <div class="ms-options">
+      ${shown.map(opt=>`
+        <label class="ms-option">
+          <input type="checkbox" value="${escapeHtml(opt)}" ${state.selected.includes(opt)?'checked':''}>
+          <span>${escapeHtml(opt)}</span>
+        </label>
+      `).join('') || '<div style="font-size:12px;color:#8a8265;padding:6px 4px;">No matches</div>'}
+    </div>
+  `;
+
+  const searchBox = panel.querySelector('.ms-search');
+  searchBox.addEventListener('click', e=> e.stopPropagation());
+  searchBox.addEventListener('input', (e)=>{
+    state.searchTerm = e.target.value;
+    renderMsPanel(key);
+    const inp = panel.querySelector('.ms-search');
+    inp.focus();
+    inp.selectionStart = inp.selectionEnd = inp.value.length;
+  });
+
+  panel.querySelectorAll('.ms-option input').forEach(cb=>{
+    cb.addEventListener('change', ()=>{
+      const val = cb.value;
+      if(cb.checked){ if(!state.selected.includes(val)) state.selected.push(val); }
+      else{ state.selected = state.selected.filter(v=>v!==val); }
+      updateMsToggleLabel(key);
+      render();
+    });
+  });
+  panel.querySelector('[data-action="all"]').addEventListener('click', (e)=>{
+    e.stopPropagation();
+    state.selected = shown.slice();
+    renderMsPanel(key);
+    updateMsToggleLabel(key);
+    render();
+  });
+  panel.querySelector('[data-action="clear"]').addEventListener('click', (e)=>{
+    e.stopPropagation();
+    state.selected = [];
+    renderMsPanel(key);
+    updateMsToggleLabel(key);
+    render();
+  });
+}
+
+function closeAllMsPanels(){
+  ['brand','type','country'].forEach(k=> document.getElementById(k+'MsPanel').classList.remove('open'));
+}
+function toggleMsPanel(key){
+  const panel = document.getElementById(key+'MsPanel');
+  const willOpen = !panel.classList.contains('open');
+  closeAllMsPanels();
+  if(willOpen){ renderMsPanel(key); panel.classList.add('open'); }
+}
+['brand','type','country'].forEach(key=>{
+  document.getElementById(key+'MsToggle').addEventListener('click', (e)=>{
+    e.stopPropagation();
+    toggleMsPanel(key);
+  });
+  document.getElementById(key+'MsPanel').addEventListener('click', e=> e.stopPropagation());
+});
+document.addEventListener('click', closeAllMsPanels);
+
+// ---------------- Mode tabs (Browse vs Search vs Countries) ----------------
+const modeBrowseBtn = document.getElementById('modeBrowseBtn');
+const modeSearchBtn = document.getElementById('modeSearchBtn');
+const modeCountriesBtn = document.getElementById('modeCountriesBtn');
+const browsePanel = document.getElementById('browsePanel');
+const searchPanel = document.getElementById('searchPanel');
+const countriesPanel = document.getElementById('countriesPanel');
+
+function setMode(mode){
+  viewMode = mode;
+  modeBrowseBtn.classList.toggle('active', mode==='browse');
+  modeSearchBtn.classList.toggle('active', mode==='search');
+  modeCountriesBtn.classList.toggle('active', mode==='countries');
+  browsePanel.classList.toggle('active', mode==='browse');
+  searchPanel.classList.toggle('active', mode==='search');
+  countriesPanel.classList.toggle('active', mode==='countries');
+  if(mode==='countries'){ renderCountriesPanel(); document.getElementById('grid').style.display='none'; document.getElementById('emptyState').style.display='none'; }
+  else{ document.getElementById('grid').style.display='grid'; render(); }
+}
+modeBrowseBtn.addEventListener('click', ()=> setMode('browse'));
+modeSearchBtn.addEventListener('click', ()=> setMode('search'));
+modeCountriesBtn.addEventListener('click', ()=> setMode('countries'));
+
+// ---------------- World coverage panel ----------------
+function renderCountriesPanel(){
+  if(coverageView === 'continents'){
+    renderContinentSummary();
+  }else{
+    renderCountryCoverage();
+  }
+}
+
+function renderContinentSummary(){
+  const container = document.getElementById('countriesContainer');
+  const term = countrySearchTerm.trim().toLowerCase();
+  const grid = document.createElement('div');
+  grid.className = 'continent-summary-grid';
+
+  CONTINENTS.forEach(continent=>{
+    if(term && !continent.toLowerCase().includes(term)) return;
+    const countriesInContinent = COUNTRIES.filter(c=>c.continent===continent);
+    const haveCountries = countriesInContinent.filter(c=>bottleCountForCountry(c.name)>0).length;
+    const totalCountries = countriesInContinent.length;
+    const totalBottlesInContinent = bottles.filter(b=>{
+      const hit = COUNTRIES.find(c=>c.name.toLowerCase()===(b.country||'').trim().toLowerCase());
+      return hit && hit.continent === continent;
+    }).length;
+    const pct = totalCountries ? Math.round((haveCountries/totalCountries)*100) : 0;
+
+    const card = document.createElement('div');
+    card.className = 'continent-summary-card';
+    card.innerHTML = `
+      <h3>${continent}</h3>
+      <div class="cs-row"><span>Countries collected</span><b>${haveCountries} / ${totalCountries}</b></div>
+      <div class="continent-progress-outer"><div class="continent-progress-inner" style="width:${pct}%;"></div></div>
+      <div class="cs-row" style="margin-top:10px;"><span>Bottles from here</span><b>${totalBottlesInContinent}</b></div>
+    `;
+    card.addEventListener('click', ()=>{
+      continentScope = continent;
+      document.querySelectorAll('#coverageViewToggle button').forEach(b=>b.classList.toggle('active', b.dataset.view==='countries'));
+      coverageView = 'countries';
+      renderCountriesPanel();
+    });
+    grid.appendChild(card);
+  });
+
+  container.innerHTML = '';
+  container.appendChild(grid);
+}
+
+function renderCountryCoverage(){
+  const container = document.getElementById('countriesContainer');
+  container.innerHTML = '';
+
+  const term = countrySearchTerm.trim().toLowerCase();
+
+  if(continentScope){
+    const backRow = document.createElement('div');
+    backRow.style.marginBottom = '14px';
+    backRow.innerHTML = `<button class="btn btn-ghost btn-sm" id="backToContinentsBtn">← All continents</button> <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#8a8265; margin-left:8px;">Showing ${continentScope} only</span>`;
+    container.appendChild(backRow);
+    document.getElementById('backToContinentsBtn').addEventListener('click', ()=>{
+      continentScope = null;
+      coverageView = 'continents';
+      document.querySelectorAll('#coverageViewToggle button').forEach(b=>b.classList.toggle('active', b.dataset.view==='continents'));
+      renderCountriesPanel();
+    });
+  }
+
+  const continentsToShow = continentScope ? [continentScope] : CONTINENTS;
+
+  continentsToShow.forEach(continent=>{
+    let list = COUNTRIES.filter(c=>c.continent===continent);
+    if(term) list = list.filter(c=>c.name.toLowerCase().includes(term));
+    if(coverageFilter==='have') list = list.filter(c=>bottleCountForCountry(c.name)>0);
+    if(coverageFilter==='missing') list = list.filter(c=>bottleCountForCountry(c.name)===0);
+    if(list.length===0) return;
+
+    const haveInContinent = COUNTRIES.filter(c=>c.continent===continent && bottleCountForCountry(c.name)>0).length;
+    const totalInContinent = COUNTRIES.filter(c=>c.continent===continent).length;
+    const isCollapsed = !!collapsedContinents[continent];
+
+    const block = document.createElement('div');
+    block.className = 'continent-block' + (isCollapsed?' collapsed':'');
+
+    const head = document.createElement('div');
+    head.className = 'continent-block-head' + (isCollapsed?' collapsed':'');
+    head.innerHTML = `<h3><span class="chev">▾</span> ${continent}</h3><span class="ccount">${haveInContinent} / ${totalInContinent} collected</span>`;
+    head.addEventListener('click', ()=>{
+      collapsedContinents[continent] = !collapsedContinents[continent];
+      renderCountriesPanel();
+    });
+
+    const grid = document.createElement('div');
+    grid.className = 'country-mini-grid';
+    list.sort((a,b)=>a.name.localeCompare(b.name)).forEach(c=>{
+      const count = bottleCountForCountry(c.name);
+      const card = document.createElement('div');
+      card.className = 'country-mini-card' + (count>0?' has-bottles':'');
+      card.innerHTML = `<div class="cn-name">${escapeHtml(c.name)}</div><div class="cn-count ${count===0?'zero':''}">${count} bottle${count===1?'':'s'}</div>`;
+      card.addEventListener('click', ()=>{
+        setMode('search');
+        document.getElementById('searchInput').value = '';
+        msState.country.selected = [c.name];
+        updateMsToggleLabel('country');
+        render();
+      });
+      grid.appendChild(card);
+    });
+
+    block.appendChild(head);
+    block.appendChild(grid);
+    container.appendChild(block);
+  });
+}
+
+document.getElementById('countrySearchInput').addEventListener('input', (e)=>{
+  countrySearchTerm = e.target.value;
+  renderCountriesPanel();
+});
+document.querySelectorAll('#coverageFilterGroup input[name="coverageFilter"]').forEach(radio=>{
+  radio.addEventListener('change', (e)=>{
+    coverageFilter = e.target.value;
+    renderCountriesPanel();
+  });
+});
+document.querySelectorAll('#coverageViewToggle button').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('#coverageViewToggle button').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    coverageView = btn.dataset.view;
+    if(coverageView === 'continents') continentScope = null;
+    renderCountriesPanel();
+  });
+});
+
+// ---------------- Export / Import ----------------
+function performExport(){
+  const payload = { exportedAt: new Date().toISOString(), count: bottles.length, bottles };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `miniatures-atlas-backup-${new Date().toISOString().slice(0,10)}.json`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+  showToast('Collection exported');
+  saveLastExportAt(Date.now());
+  renderBackupBanner();
+}
+
+document.getElementById('exportBtn').addEventListener('click', performExport);
+document.getElementById('backupBannerExportBtn').addEventListener('click', performExport);
+document.getElementById('backupBannerDismiss').addEventListener('click', ()=>{
+  bannerDismissedAt = Date.now();
+  renderBackupBanner();
+});
+
+document.getElementById('importBtn').addEventListener('click', ()=>{
+  document.getElementById('importFile').click();
+});
+document.getElementById('importFile').addEventListener('change', (e)=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = async (evt)=>{
+    try{
+      const data = JSON.parse(evt.target.result);
+      const incoming = Array.isArray(data) ? data : data.bottles;
+      if(!Array.isArray(incoming)) throw new Error('bad format');
+      const mode = confirm(`Import ${incoming.length} bottles.\n\nOK = Merge with existing collection\nCancel = Replace existing collection entirely`) ? 'merge' : 'replace';
+
+      if(mode==='replace'){
+        for(const b of bottles) await deleteBottleStorage(b.id);
+        bottles = incoming.map(normalizeImported);
+      } else {
+        const existingIds = new Set(bottles.map(b=>b.id));
+        const merged = [...bottles];
+        incoming.forEach(raw=>{
+          const b = normalizeImported(raw);
+          if(existingIds.has(b.id)){ b.id = 'b_'+Date.now()+'_'+Math.random().toString(36).slice(2,8); }
+          merged.push(b);
+        });
+        bottles = merged;
+      }
+      for(const b of bottles) await saveBottle(b);
+      await saveIndex();
+      render();
+      showToast(`Imported (${mode}) — ${incoming.length} bottles processed`);
+    }catch(err){
+      console.error(err);
+      showToast('Import failed — file format not recognised');
+    }
+    e.target.value='';
+  };
+  reader.readAsText(file);
+});
+
+function normalizeImported(raw){
+  return {
+    id: raw.id || ('b_'+Date.now()+'_'+Math.random().toString(36).slice(2,8)),
+    name: raw.name || 'Unnamed bottle',
+    brand: raw.brand || '',
+    type: raw.type || 'Other',
+    country: raw.country || '',
+    continent: raw.continent || guessContinent(raw.country),
+    abv: raw.abv || '',
+    volume: raw.volume || 50,
+    vintage: raw.vintage || '',
+    dateAcquired: raw.dateAcquired || '',
+    source: raw.source || '',
+    price: raw.price || '',
+    notes: raw.notes || '',
+    photo: raw.photo || null,
+    dateAdded: raw.dateAdded || Date.now()
+  };
+}
+
+// ---------------- Toast ----------------
+let toastTimer=null;
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=> t.classList.remove('show'), 2600);
+}
+
+// ---------------- Auth ----------------
+function showLoginGate(){ document.getElementById('loginGate').style.display = 'flex'; }
+function hideLoginGate(){ document.getElementById('loginGate').style.display = 'none'; }
+function setLoginError(msg){ document.getElementById('loginError').textContent = msg || ''; }
+
+document.getElementById('sendCodeBtn').addEventListener('click', async ()=>{
+  if(!supabaseReady){ setLoginError('Sync library failed to load — refresh the page and try again.'); return; }
+  const email = document.getElementById('loginEmail').value.trim();
+  if(!email || !email.includes('@')){ setLoginError('Enter a valid email address.'); return; }
+  setLoginError('');
+  const btn = document.getElementById('sendCodeBtn');
+  btn.disabled = true; btn.textContent = 'Sending…';
+  try{
+    const { error } = await supabaseClient.auth.signInWithOtp({ email, options:{ shouldCreateUser:true } });
+    if(error) throw error;
+    document.getElementById('loginStepEmail').style.display = 'none';
+    document.getElementById('loginStepCode').style.display = 'block';
+    document.getElementById('loginCode').focus();
+  }catch(e){
+    console.error(e);
+    setLoginError(e.message || 'Could not send code. Check the email and try again.');
+  }finally{
+    btn.disabled = false; btn.textContent = 'Send me a code';
+  }
+});
+
+document.getElementById('verifyCodeBtn').addEventListener('click', async ()=>{
+  const email = document.getElementById('loginEmail').value.trim();
+  const code = document.getElementById('loginCode').value.trim();
+  if(!code){ setLoginError('Enter the 6-digit code from your email.'); return; }
+  setLoginError('');
+  const btn = document.getElementById('verifyCodeBtn');
+  btn.disabled = true; btn.textContent = 'Verifying…';
+  try{
+    const { data, error } = await supabaseClient.auth.verifyOtp({ email, token: code, type:'email' });
+    if(error) throw error;
+    currentUser = data.user;
+    await startAppForUser();
+  }catch(e){
+    console.error(e);
+    setLoginError(e.message || 'That code didn\'t work — check it and try again.');
+  }finally{
+    btn.disabled = false; btn.textContent = 'Verify & sign in';
+  }
+});
+
+document.getElementById('backToEmailBtn').addEventListener('click', ()=>{
+  document.getElementById('loginStepCode').style.display = 'none';
+  document.getElementById('loginStepEmail').style.display = 'block';
+  document.getElementById('loginCode').value = '';
+  setLoginError('');
+});
+
+document.getElementById('signOutBtn').addEventListener('click', async ()=>{
+  await supabaseClient.auth.signOut();
+  currentUser = null;
+  bottles = [];
+  Object.keys(photoUrlCache).forEach(k=>delete photoUrlCache[k]);
+  document.getElementById('loginEmail').value = '';
+  document.getElementById('loginCode').value = '';
+  document.getElementById('loginStepCode').style.display = 'none';
+  document.getElementById('loginStepEmail').style.display = 'block';
+  setLoginError('');
+  showLoginGate();
+});
+
+async function startAppForUser(){
+  hideLoginGate();
+  document.getElementById('userEmailLabel').textContent = currentUser.email;
+  await loadFromStorage();
+  await loadLastExportAt();
+  render();
+  if(bottles.length===0){
+    showToast(`Welcome, ${currentUser.email.split('@')[0]} — add your first bottle, or import a backup to get started`);
+  }
+}
+
+// ---------------- Init ----------------
+(async function init(){
+  if(!supabaseReady){ showLoginGate(); return; }
+  const { data: { session } } = await supabaseClient.auth.getSession();
+  if(session && session.user){
+    currentUser = session.user;
+    await startAppForUser();
+  }else{
+    showLoginGate();
+  }
+})();
+window.__atlasScriptCompleted = true;
+</script>
+
+<script>
+// Independent watchdog — runs as its own tiny script, so it survives even if
+// the main app script above failed to parse or got truncated/corrupted in transit.
+setTimeout(function(){
+  if(!window.__atlasScriptCompleted){
+    var banner = document.createElement('div');
+    banner.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#6b2737;color:#fff;padding:14px 18px;font-family:sans-serif;font-size:13px;z-index:9999;text-align:center;';
+    banner.textContent = 'This page did not finish loading correctly (the app script is incomplete or broken). This usually means the file got corrupted during upload — try re-uploading the original file rather than copy-pasting its contents.';
+    document.body.prepend(banner);
+  }
+}, 2500);
+</script>
+
+</body>
+</html>
